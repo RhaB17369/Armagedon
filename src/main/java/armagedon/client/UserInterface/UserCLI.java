@@ -11,7 +11,8 @@ public class UserCLI {
     public static void main(String[] args) {
         System.out.println(ansi().reset());
         displayRandomAsciiLogo();
-        displayMenu();
+        System.out.println();
+        displayHelpMenu();
     }
 
     private static void displayRandomAsciiLogo() {
@@ -40,21 +41,37 @@ public class UserCLI {
                 )
         );
 
-        //         Select a logo at random
+        // Sélectionner un logo au hasard
         Random random = new Random();
         Logo randomLogo = logos.get(random.nextInt(logos.size()));
 
-        // Show selected logo
-        System.out.println(ansi().fg(randomLogo.getColor()).a(randomLogo.getAsciiArt()).reset());
+        // Afficher le logo sélectionné
+        String logoArt = randomLogo.getAsciiArt();
+        String[] logoLines = logoArt.split("\n");
+
+        // Calculer la largeur du logo pour centrer le texte GitHub
+        int logoWidth = logoLines[0].length();
+
+        // Afficher le texte "Conçu par RhaB17369" à droite du logo
+        for (int i = 0; i < logoLines.length; i++) {
+            String line = logoLines[i];
+            if (i == 0) { // Place le texte en haut à droite
+                System.out.println(ansi().fg(randomLogo.getColor()).a(line + "   Conçu par RhaB17369").reset());
+            } else {
+                System.out.println(ansi().fg(randomLogo.getColor()).a(line).reset());
+            }
+        }
+
+        // Ajouter le texte GitHub centré sous le logo
+        String infoBottomCenter = "GITHUB https://github.com/RhaB17369/Armagedon.git";
+        int padding = (logoWidth - infoBottomCenter.length()) / 2;
+        String centeredInfo = " ".repeat(padding) + infoBottomCenter;
+        System.out.println(ansi().fg(randomLogo.getColor()).a(centeredInfo).reset());
     }
 
-    private static void displayMenu() {
-        System.out.println("\n==== Menu Principal ====");
-        System.out.println("1. Lancer une attaque");
-        System.out.println("2. Voir les résultats");
-        System.out.println("3. Aide");
-        System.out.println("4. Quitter\n");
-        System.out.print("Veuillez choisir une option : ");
+    private static void displayHelpMenu() {
+        CommandHandler commandHandler = new CommandHandler();
+        System.out.println(ansi().fg(Ansi.Color.GREEN).a(commandHandler.getUsage()).reset());
     }
 
     private static class Logo {
